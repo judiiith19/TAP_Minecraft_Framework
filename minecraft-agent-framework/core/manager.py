@@ -29,7 +29,7 @@ class Manager:
             message = event.message.lower()
             for agent in self.agents:
                 if agent.name.lower() in message:  # Si el nombre del bot está en el mensaje
-                    agent.update(event)  # Activar solo ese bot
+                    agent.update(event)  # Activar ese bot
 
 
     def run(self):

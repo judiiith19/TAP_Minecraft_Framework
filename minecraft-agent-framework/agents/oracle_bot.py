@@ -16,7 +16,7 @@ class OracleBot(BaseAgent, Action, EventObserver):
         return datetime.now().strftime("Hoy es %A, %d de %B de %Y.")
 
     def run(self):
-        self.chat.send_message("OracleBot: Pregunta lo que quieras, añade, elimina o modifica informacion.")
+        self.chat.send_message("OracleBot: Pregunta lo que quieras, agrega, elimina o modifica informacion.")
 
     def update(self, event):
         if hasattr(event, 'message') and isinstance(event.message, str):
@@ -27,7 +27,7 @@ class OracleBot(BaseAgent, Action, EventObserver):
                     data = message.split("oraclebot add info:")[1]
                     question, answer = data.split("->")
                     self.answers[question.strip()] = answer.strip()
-                    self.chat.send_message(f"He añadido la respuesta para: '{question.strip()}'.")
+                    self.chat.send_message(f"He agregado la respuesta para: '{question.strip()}'.")
                 except ValueError:
                     self.chat.send_message("Formato incorrecto. Usa: OracleBot add info: pregunta -> respuesta")
 
@@ -67,6 +67,6 @@ class OracleBot(BaseAgent, Action, EventObserver):
     def show_help(self):
         self.chat.send_message("Comandos disponibles para OracleBot:")
         self.chat.send_message("- Pregunta predefinida: Recibe respuestas configuradas.")
-        self.chat.send_message("- add info: pregunta -> respuesta: Añade una respuesta nueva.")
+        self.chat.send_message("- add info: pregunta -> respuesta: Agrega una respuesta nueva.")
         self.chat.send_message("- remove info: pregunta: Elimina una respuesta existente.")
         self.chat.send_message("- update info: pregunta -> nueva respuesta: Actualiza una respuesta existente.")

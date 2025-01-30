@@ -7,7 +7,7 @@ import math
 
 class TNTBot(BaseAgent, Action, EventObserver):
     def run(self):
-        self.chat.send_message("TNTBot: Escribe comandos para interactuar conmigo :)")
+        self.chat.send_message("TNTBot: Escribe comandos para interactuar conmigo.")
 
     def update(self, event):
         if hasattr(event, 'message') and isinstance(event.message, str):
@@ -57,6 +57,6 @@ class TNTBot(BaseAgent, Action, EventObserver):
     
     def show_help(self):
         self.chat.send_message("Comandos disponibles para TNTBot:")
-        self.chat.send_message("- add tnt: Añade un bloque de TNT junto al jugador.")
+        self.chat.send_message("- add tnt: Coloca un bloque de TNT junto al jugador.")
         self.chat.send_message("- fire tnt: Detona el TNT mas cercano en un radio de 3 bloques.")
         self.chat.send_message("- line tnt [longitud]: Coloca y detona una fila de TNT de la longitud especificada.")

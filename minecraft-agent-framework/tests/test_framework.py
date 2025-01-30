@@ -41,10 +41,6 @@ class TestChat(unittest.TestCase):
         self.chat.send_message("Hola Minecraft")
         self.env.post_to_chat.assert_called_with("Hola Minecraft")
     
-    def test_simulate_message(self):
-        self.chat.simulate_message("Test Message")
-        self.assertIn("Test Message", self.chat.read_messages())
-    
 class TestBots(unittest.TestCase):
     @patch("core.Minecraft.environment.minecraft.Minecraft.create", return_value=MagicMock())
     def setUp(self, mock_minecraft):

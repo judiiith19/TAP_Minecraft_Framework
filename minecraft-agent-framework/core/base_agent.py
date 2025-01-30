@@ -8,4 +8,3 @@ class BaseAgent:
         self.environment = Environment()
         self.movement = Movement(self.environment)
         self.chat = Chat(self.environment)
-        
