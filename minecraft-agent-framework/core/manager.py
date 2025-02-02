@@ -33,7 +33,11 @@ class Manager:
 
 
     def run(self):
-        while(1):
-            chats = self.mc.events.pollChatPosts()
-            for chat in chats:
-                self.notify(chat)
+        try:
+            print("Press Ctrl+C to stop it.")
+            while True:
+                chats = self.mc.events.pollChatPosts()
+                for chat in chats:
+                    self.notify(chat)
+        except KeyboardInterrupt:
+            print("Closing manager... Bye!")

@@ -13,19 +13,27 @@ class TNTBot(BaseAgent, Action, EventObserver):
         if hasattr(event, 'message') and isinstance(event.message, str):
             message = event.message.lower()
 
-            if "add tnt" in message:
-                self.add_tnt()
-            elif "fire tnt" in message:
-                self.fire_tnt()
-            elif "line tnt" in message:
+            commands = {
+                "tntbot add tnt": lambda: self.add_tnt(),
+                "tntbot fire tnt": lambda: self.fire_tnt(),
+            }
+
+            for cmd, func in commands.items():
+                if message.startswith(cmd):
+                    func()
+                    return
+                
+            if message.startswith("tntbot line tnt"):
                 try:
-                    # Obtener la longitud de la fila de TNT del mensaje
                     length = int(message.split("line tnt ")[1])
                     self.line_tnt(length)
+                    return
                 except (IndexError, ValueError):
                     self.chat.send_message("Por favor especifica la longitud de la fila. Ejemplo: TNTBot line TNT 5")
+                    return
             elif message.startswith("tntbot help"):
                 self.show_help()
+            
             
     def add_tnt(self):
         pos = self.environment.get_player_position()
@@ -49,14 +57,22 @@ class TNTBot(BaseAgent, Action, EventObserver):
         pos = self.environment.get_player_position()
         for i in range(length):
             self.environment.set_block(pos.x + i, pos.y, pos.z, block.TNT.id)
-        self.chat.send_message(f"He colocado una fila de {length} bloques de TNT. Detonandola en 5 segundos...")
-        time.sleep(5)
+        self.chat.send_message(f"He colocado una fila de {length} bloques de TNT.")
+        for i in range(5, 0, -1):
+            self.chat.send_message(f"Detonación en {i} segundos...")
+            time.sleep(1)
         for i in range(length):
             self.environment.set_block(pos.x + i, pos.y + 1, pos.z, block.FIRE.id)
         self.chat.send_message("Fila de TNT detonada.")
-    
+        
     def show_help(self):
-        self.chat.send_message("Comandos disponibles para TNTBot:")
-        self.chat.send_message("- add tnt: Coloca un bloque de TNT junto al jugador.")
-        self.chat.send_message("- fire tnt: Detona el TNT mas cercano en un radio de 3 bloques.")
-        self.chat.send_message("- line tnt [longitud]: Coloca y detona una fila de TNT de la longitud especificada.")
+        messages = [
+            "Comandos disponibles para TNTBot:",
+            "   - add tnt: ",
+            "       Coloca un bloque de TNT junto al jugador.",
+            "   - fire tnt: ",
+            "       Detona el TNT mas cercano en un radio de 3 bloques.",
+            "   - line tnt [longitud]: ",
+            "       Coloca y detona una fila de TNT de la longitud especificada.",
+        ]
+        list(map(self.chat.send_message, messages))
