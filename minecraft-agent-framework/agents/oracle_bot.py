@@ -86,5 +86,3 @@ class OracleBot(BaseAgent, Action, EventObserver):
         question = message.replace("oraclebot", "").strip()
         answer = self.answers.get(question, "No se la respuesta a esa pregunta.")
         self.chat.send_message(f"{question} -> {answer}")
-
-    

@@ -16,6 +16,7 @@ class TNTBot(BaseAgent, Action, EventObserver):
             commands = {
                 "tntbot add tnt": lambda: self.add_tnt(),
                 "tntbot fire tnt": lambda: self.fire_tnt(),
+                "tntbot help": lambda: self.show_help(),
             }
 
             for cmd, func in commands.items():
@@ -31,9 +32,6 @@ class TNTBot(BaseAgent, Action, EventObserver):
                 except (IndexError, ValueError):
                     self.chat.send_message("Por favor especifica la longitud de la fila. Ejemplo: TNTBot line TNT 5")
                     return
-            elif message.startswith("tntbot help"):
-                self.show_help()
-            
             
     def add_tnt(self):
         pos = self.environment.get_player_position()
@@ -59,7 +57,7 @@ class TNTBot(BaseAgent, Action, EventObserver):
             self.environment.set_block(pos.x + i, pos.y, pos.z, block.TNT.id)
         self.chat.send_message(f"He colocado una fila de {length} bloques de TNT.")
         for i in range(5, 0, -1):
-            self.chat.send_message(f"Detonación en {i} segundos...")
+            self.chat.send_message(f"Detonando en {i} segundos...")
             time.sleep(1)
         for i in range(length):
             self.environment.set_block(pos.x + i, pos.y + 1, pos.z, block.FIRE.id)

@@ -24,6 +24,7 @@ class InsultBot(BaseAgent, Action, EventObserver):
                 self.handle_insult(message)
             elif message.startswith("insultbot help"):
                 self.show_help()
+
     def handle_insult(self, message):
         try:
             player_name = message.split("insult ")[1].strip()
@@ -31,6 +32,7 @@ class InsultBot(BaseAgent, Action, EventObserver):
             self.chat.send_message(f"{player_name}, {insult}")
         except IndexError:
             self.chat.send_message("Por favor especifica el nombre de un jugador. Ejemplo: InsultBot insult player_1234")
+            
     def show_help(self):
         messages = [
             "Comandos disponibles para InsultBot:",
