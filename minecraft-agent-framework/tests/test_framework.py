@@ -74,23 +74,39 @@ class TestOracleBot(unittest.TestCase):
         expected_date = datetime.now().strftime("Hoy es %A, %d de %B de %Y.")
         self.assertEqual(self.oracle_bot.get_today_date(), expected_date)
     
-    def test_add_info(self):
+    def test_add_info_correct_format(self):
         message = "oraclebot add info: el fuego quema? -> no"
         self.oracle_bot.add_info(message)
         self.assertEqual(self.oracle_bot.answers["el fuego quema?"], "no")
+    
+    def test_add_info_incorrect_format(self):
+        message = "oraclebot add info: el fuego quema? no"
+        self.oracle_bot.add_info(message)
+        self.oracle_bot.chat.send_message.assert_called_with("Formato incorrecto. Usa: OracleBot add info: pregunta -> respuesta")
 
-    def test_update_info(self):
+    def test_update_info_existent(self):
         self.oracle_bot.answers["el fuego quema?"] = "no"
         message = "oraclebot update info: el fuego quema? -> si"
         self.oracle_bot.update_info(message)
         self.assertEqual(self.oracle_bot.answers["el fuego quema?"], "si")
+
+    def test_update_info_inexistent(self):
+        message = "oraclebot update info: el fuego quema? -> si"
+        self.oracle_bot.update_info(message)
+        self.oracle_bot.chat.send_message.assert_called_with("No he encontrado informacion para: 'el fuego quema?'.")
     
-    def test_remove_info(self):
+    def test_remove_info_existent(self):
         self.oracle_bot.answers["el fuego quema?"] = "si"
         message = "oraclebot remove info: el fuego quema?"
         self.oracle_bot.remove_info(message)
+        self.assertNotIn("el fuego quema?", self.oracle_bot.answers)
+
+    def test_remove_info_inexistent(self):
+        message = "oraclebot remove info: el fuego quema?"
+        self.oracle_bot.remove_info(message)
         self.assertNotIn("prueba", self.oracle_bot.answers)
-    
+        self.oracle_bot.chat.send_message.assert_called_with("No he encontrado informacion para: 'el fuego quema?'.")
+
     def test_try_to_answer_known(self):
         self.oracle_bot.answers["el fuego quema?"] = "si"
         self.oracle_bot.try_to_answer("oraclebot el fuego quema?")
@@ -120,11 +136,28 @@ class TestTNTBot(unittest.TestCase):
         self.tnt_bot.add_tnt()
         self.tnt_bot.environment.set_block.assert_called()
     
-    def test_fire_tnt(self):
+    def test_fire_tnt_success(self):
         self.tnt_bot.environment.get_player_position.return_value = MagicMock(x=0, y=0, z=0)
         self.tnt_bot.environment.get_block.return_value = 46  # TNT block ID
         self.tnt_bot.fire_tnt()
         self.tnt_bot.environment.set_block.assert_called()
+
+    def test_fire_tnt_failed(self):
+        self.tnt_bot.environment.get_player_position.return_value = MagicMock(x=0, y=0, z=0)
+        self.tnt_bot.environment.get_block.return_value = 0  # TNT block ID
+        self.tnt_bot.fire_tnt()
+        self.tnt_bot.chat.send_message.assert_called_with("No he encontrado TNT cercano para detonar.")
+
+    def test_line_tnt_correct_param(self):
+        self.tnt_bot.environment.get_player_position.return_value = MagicMock(x=0, y=0, z=0)
+        length = 5
+        self.tnt_bot.line_tnt(length)
+        self.assertEqual(self.tnt_bot.environment.set_block.call_count, length*2)  #Por dos porque se coloca FIRE por cada TNT
+        self.tnt_bot.chat.send_message.assert_called_with("Fila de TNT detonada.")
+    
+    def test_show_help(self):
+        self.tnt_bot.show_help()
+        self.tnt_bot.chat.send_message.assert_called()
 
 class TestInsultBot(unittest.TestCase):
     @patch("core.Minecraft.environment.minecraft.Minecraft.create", return_value=MagicMock())
@@ -137,10 +170,20 @@ class TestInsultBot(unittest.TestCase):
         self.insult_bot.environment = self.env
         self.insult_bot.chat = self.chat
     
-    def test_insult(self):
+    def test_insult_correct_format(self):
         event = MagicMock()
         event.message = "InsultBot insult player123"
         self.insult_bot.update(event)
+        self.insult_bot.chat.send_message.assert_called()
+    
+    def test_insult_incorrect_format(self):
+        event = MagicMock()
+        event.message = "InsultBot insult"
+        self.insult_bot.update(event)
+        self.insult_bot.chat.send_message.assert_called_with("Por favor especifica el nombre de un jugador. Ejemplo: InsultBot insult player_1234")
+    
+    def test_show_help(self):
+        self.insult_bot.show_help()
         self.insult_bot.chat.send_message.assert_called()
     
 if __name__ == "__main__":
