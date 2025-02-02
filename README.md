@@ -51,6 +51,12 @@ El framework permitie a los usuarios crear sus propios agentes personalizados.
 
 Sabrás que está activado porque verás (minecraft-env) al inicio de la línea de comandos.
 
+Una vez activado el entorno virtual, tienes que instalar las librerias mencionadas anteriormente:
+      
+      pip install mcpi
+
+      pip install coverage
+      
 # 🚀 Uso del framework
 
 Para iniciar el framework y ejecutar los agentes:
@@ -58,6 +64,8 @@ Para iniciar el framework y ejecutar los agentes:
     python minecraft-agent-framework/main.py
 
 Los agentes responderán automáticamente a eventos en el chat del juego.
+
+Cuando quieras que finalice, solo tienes que hacer "Ctrl + C" desde el terminal.
 
 # 🛠️ Cómo crear un nuevo agente
 
